@@ -15,6 +15,11 @@ those claims matter as much as features, so both are recorded here.
 - CI running the mocked suite on Python 3.10–3.13, plus a job that verifies the live suite still
   collects.
 
+### Added (continued)
+- Staleness detection on checklist writes: because the write replaces the whole list, a plan built
+  from older state would silently discard anything changed in between. `apply()` now re-reads and
+  aborts on mismatch, with `force=True` to override deliberately.
+
 ### Fixed
 - **`delete` replaced by `move … to list "Trash"` for to-dos and projects.** The live suite caught
   `delete (to do id "…")` failing intermittently with `-1728` on objects readable through the very

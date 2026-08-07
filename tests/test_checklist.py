@@ -72,3 +72,36 @@ def test_read_checklist_orders_by_index(conn):
     items = read.checklist_items(conn, "t1")
     assert [i["title"] for i in items] == ["Make the bed", "Drink water", "Stretch"]
     assert items[1]["status"] == read.STATUS_COMPLETED
+
+
+# --- concurrency: the plan must not clobber a change made after it was built ---
+
+def test_apply_refuses_when_the_checklist_changed_underneath(conn, monkeypatch, tmp_path):
+    """The write replaces the whole list, so a stale plan would discard edits."""
+    plan = checklist.plan(conn, "t1", rename={"Stretch": "Stretch more"})
+
+    # someone ticks an item in the app between plan() and apply()
+    conn.execute("UPDATE TMChecklistItem SET status = 3 WHERE uuid = 'c1'")
+
+    with pytest.raises(checklist.StaleplanError, match="changed after this plan was built"):
+        checklist.apply(conn, plan, backup_dir=tmp_path)
+
+
+def test_apply_can_be_forced_past_the_staleness_check(conn, monkeypatch, tmp_path):
+    plan = checklist.plan(conn, "t1", rename={"Stretch": "Stretch more"})
+    conn.execute("UPDATE TMChecklistItem SET status = 3 WHERE uuid = 'c1'")
+
+    wrote = []
+    monkeypatch.setattr(checklist.urlscheme, "replace_checklist",
+                        lambda uuid, items: wrote.append((uuid, items)))
+    monkeypatch.setattr(checklist.read, "connect", lambda: conn)
+    monkeypatch.setattr(checklist.guards, "verify_checklist", lambda *a: None)
+
+    checklist.apply(conn, plan, backup_dir=tmp_path, settle_seconds=0, force=True)
+    assert wrote, "force=True must let the write through"
+
+
+def test_unchanged_plan_never_reaches_the_staleness_check(conn, tmp_path):
+    """Nothing to write means nothing to clobber."""
+    plan = checklist.plan(conn, "t1", rename={"Not present": "x"})
+    assert checklist.apply(conn, plan, backup_dir=tmp_path) is plan

@@ -164,3 +164,33 @@ def test_accents_and_multiline_notes_survive_a_round_trip(sandbox, conn):
     ).ok
     sandbox.settle()
     assert conn.execute("SELECT notes FROM TMTask WHERE uuid=?", (task,)).fetchone()[0] == notes
+
+
+def test_stale_plan_is_refused_against_a_real_edit(sandbox, conn):
+    """A plan built before someone ticks an item must not clobber that tick."""
+    import os
+    if not os.environ.get("THINGS_AUTH_TOKEN"):
+        pytest.skip("needs THINGS_AUTH_TOKEN")
+
+    task = sandbox.todo("stale")
+    sandbox.settle()
+    urlscheme.replace_checklist(task, [
+        {"title": "one", "completed": False},
+        {"title": "two", "completed": False},
+    ])
+    sandbox.settle(2.5)
+
+    plan = checklist.plan(conn, task, rename={"two": "two edited"})
+
+    # meanwhile, the list changes for real
+    urlscheme.replace_checklist(task, [
+        {"title": "one", "completed": True},
+        {"title": "two", "completed": False},
+    ])
+    sandbox.settle(2.5)
+
+    with pytest.raises(checklist.StaleplanError):
+        checklist.apply(conn, plan)
+
+    still_checked = read.checklist_items(conn, task)[0]["status"]
+    assert still_checked == read.STATUS_COMPLETED, "the concurrent edit must survive"

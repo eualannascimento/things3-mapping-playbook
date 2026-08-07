@@ -73,8 +73,20 @@ Every cell has an exact, tested command in **[docs/PLAYBOOK.md](docs/PLAYBOOK.md
 - **retries only for transient errors**, never for permanent ones;
 - **per-item isolation** in batches: one failure does not take down the rest.
 
+- **staleness detection**: a checklist write compares against the state the plan was built on and
+  aborts rather than clobbering an edit made in the app meanwhile.
+
 Not guaranteed: automatic rollback (the backup is deliberately manual — reverting blindly can make
 things worse), atomicity across multiple items, and anything requiring recurrence to be writable.
+
+### Verified limits
+
+| | |
+|---|---|
+| Scale | Read paths measured on a synthetic database of 10,000 tasks and 50,000 checklist items: full task read 16 ms, all checklist items 47 ms. No degradation to design around |
+| Write latency | Creates and deletes appear in SQLite within milliseconds (median 3 ms, worst 45 ms over 15 samples), so verification does not need to wait |
+| Concurrency | Only checklist writes are protected, since only they replace a whole structure. Field-level writes are last-write-wins, like the app itself |
+| Things versions | Everything was verified on 3.22.11 / macOS 26.5. Older versions are untested; if a claim does not hold on yours, the live suite will say which one |
 
 ## Install
 

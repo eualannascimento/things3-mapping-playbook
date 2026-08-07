@@ -17,6 +17,15 @@ from pathlib import Path
 from . import guards, read, urlscheme
 
 
+class StaleplanError(RuntimeError):
+    """The checklist changed between building the plan and applying it."""
+
+
+def _fingerprint(items: list[dict]) -> list[tuple[str, int]]:
+    """What must not have changed: the titles and their checked state, in order."""
+    return [(i["title"], i["status"]) for i in items]
+
+
 @dataclass
 class ChecklistPlan:
     task_uuid: str
@@ -67,8 +76,15 @@ def plan(conn, task_uuid: str, *, rename: dict[str, str] | None = None,
 
 
 def apply(conn, plan: ChecklistPlan, *, backup_dir: Path | None = None,
-          settle_seconds: float = 2.0) -> ChecklistPlan:
+          settle_seconds: float = 2.0, force: bool = False) -> ChecklistPlan:
     """Apply a plan: backup, replace the list, then verify against SQLite.
+
+    Because the write replaces the whole list, a plan built from stale state
+    would silently discard whatever changed in between -- someone ticking an item
+    in the app while the plan was open, for instance. So the current state is
+    re-read immediately before writing and compared against what the plan was
+    built on; a mismatch aborts instead of clobbering. `force=True` skips that
+    check, for callers that genuinely want to overwrite.
 
     Note this does *not* refuse repeating tasks. Replacing a checklist edits the
     task in place -- uuid, recurrence and history all survive. The recurrence
@@ -78,6 +94,15 @@ def apply(conn, plan: ChecklistPlan, *, backup_dir: Path | None = None,
 
     if not plan.changed:
         return plan
+
+    if not force:
+        current = read.checklist_items(conn, plan.task_uuid)
+        if _fingerprint(current) != _fingerprint(plan.before):
+            raise StaleplanError(
+                f"The checklist of {plan.task_uuid!r} changed after this plan was built. "
+                "Writing now would replace the whole list and discard that change. "
+                "Rebuild the plan, or pass force=True to overwrite deliberately."
+            )
 
     plan.backup_path = guards.backup(
         plan.task_uuid,
