@@ -8,10 +8,9 @@ Automating Things 3 is frustrating enough that people migrate away over it. The 
 "there's no modern API" — and that's true: only AppleScript (Mac-only), the URL scheme, and an
 undocumented local SQLite database.
 
-But the diagnosis is incomplete. The existing public tools (`things.py`, `things-mcpb`, `clings`,
-`things-api`, `thingsexporter`, among others) are all **thin wrappers**: they expose what the
-platform gives and stop there. None of them address what actually hurts once an AI agent writes
-into your task list:
+But the diagnosis is incomplete. The public tools that exist today are all **thin wrappers**: they
+expose what the platform gives and stop there. None of them address what actually hurts once an AI
+agent writes into your task list:
 
 - there's no way to tell whether a write **actually took effect**;
 - there's no way to **undo** when it didn't;
@@ -30,19 +29,22 @@ into your task list:
 
 Everything below was verified on a Mac, against the installed app — not copied from documentation.
 
-| | Read | Create | Rename | Edit | Delete | Duplicate | Move | Complete | Restore | Recurrence |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| **To-do** | ✅ | ✅ | ✅ | ✅ | ✅ | 🟡 | 🟡 | ✅ | ✅ | 🟡 |
-| **Project** | ✅ | ✅ | ✅ | ✅ | ✅ | 🟡 | ✅ | ✅ | ✅ | ➖ |
-| **Area** | ✅ | ✅ | ✅ | ✅ | ⚠️ | 🟡 | ➖ | ➖ | 🔶 | ➖ |
-| **Tag** | ✅ | ✅ | ✅ | ✅ | ⚠️ | 🟡 | ✅ | ➖ | 🔶 | ➖ |
-| **Heading** | 🟡 | 🟡 | 🟡 | 🟡 | 🔶 | 🔶 | 🔶 | ✅ | ➖ | ➖ |
-| **Checklist item** | 🟡 | ✅ | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | ✅ | ➖ | ➖ |
-| **Recurrence** | 🟡 | ❌ | ➖ | ❌ | ❌ | ➖ | ➖ | ➖ | ➖ | ➖ |
+| | C | R | U | D | Dup | Move | Done | Rest |
+|---|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| **To-do** | ✅ | ✅ | ✅ | ✅ | 🟡 | 🟡 | ✅ | ✅ |
+| **Project** | ✅ | ✅ | ✅ | ✅ | 🟡 | ✅ | ✅ | ✅ |
+| **Area** | ✅ | ✅ | ✅ | ⚠️ | 🟡 | ➖ | ➖ | 🔶 |
+| **Tag** | ✅ | ✅ | ✅ | ⚠️ | 🟡 | ✅ | ➖ | 🔶 |
+| **Heading** | 🟡 | 🟡 | 🟡 | 🔶 | 🔶 | 🔶 | ✅ | ➖ |
+| **Checklist item** | ✅ | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | ✅ | ➖ |
+| **Recurrence** | ❌ | 🟡 | ❌ | ❌ | ➖ | ➖ | ➖ | ➖ |
 
-✅ works directly · 🟡 cheap validated workaround · 🔶 expensive workaround (rebuild the parent, or
-restore from backup) · ⚠️ works but **irreversible** · ❌ impossible by any route, including
-composition · ➖ not applicable
+**Columns** — C create · R read · U update (rename and edit alike) · D delete · Dup duplicate ·
+Move move · Done complete or cancel · Rest restore from the Trash
+
+**Cells** — ✅ works directly · 🟡 cheap validated workaround · 🔶 expensive workaround (rebuild the
+parent, or restore from a backup) · ⚠️ works but **irreversible** · ❌ impossible by any route,
+including composition · ➖ not applicable
 
 > **Criterion**: `❌` only when there is no path **even by composing operations**. If a sequence of
 > supported steps reaches the result, it's 🟡 or 🔶 — never ❌. Every workaround here was executed

@@ -11,10 +11,9 @@ documentation is wrong in at least one place** and the community tools inherit t
 People migrate away from Things because "it has no modern API". That is true — there is only
 AppleScript (Mac-only), a URL scheme, and an undocumented local SQLite database.
 
-But the usual diagnosis is incomplete. The existing tools (`things.py`, `things-mcpb`, `clings`,
-`things-api`, `thingsexporter`, and others) are thin wrappers: they expose what the platform gives
-and stop there. None of them address what actually hurts once an AI agent starts writing into your
-task list:
+But the usual diagnosis is incomplete. The tools that exist today are thin wrappers: they expose
+what the platform gives and stop there. None of them address what actually hurts once an AI agent
+starts writing into your task list:
 
 - you cannot tell whether a write **actually took effect**;
 - there is no way to **undo** when it didn't;
@@ -26,18 +25,21 @@ task list:
 
 ## Capability matrix
 
-| | Read | Create | Rename | Edit | Delete | Duplicate | Move | Complete | Restore | Recurrence |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| **To-do** | ✅ | ✅ | ✅ | ✅ | ✅ | 🟡 | 🟡 | ✅ | ✅ | 🟡 |
-| **Project** | ✅ | ✅ | ✅ | ✅ | ✅ | 🟡 | ✅ | ✅ | ✅ | ➖ |
-| **Area** | ✅ | ✅ | ✅ | ✅ | ⚠️ | 🟡 | ➖ | ➖ | 🔶 | ➖ |
-| **Tag** | ✅ | ✅ | ✅ | ✅ | ⚠️ | 🟡 | ✅ | ➖ | 🔶 | ➖ |
-| **Heading** | 🟡 | 🟡 | 🟡 | 🟡 | 🔶 | 🔶 | 🔶 | ✅ | ➖ | ➖ |
-| **Checklist item** | 🟡 | ✅ | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | ✅ | ➖ | ➖ |
-| **Recurrence** | 🟡 | ❌ | ➖ | ❌ | ❌ | ➖ | ➖ | ➖ | ➖ | ➖ |
+| | C | R | U | D | Dup | Move | Done | Rest |
+|---|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| **To-do** | ✅ | ✅ | ✅ | ✅ | 🟡 | 🟡 | ✅ | ✅ |
+| **Project** | ✅ | ✅ | ✅ | ✅ | 🟡 | ✅ | ✅ | ✅ |
+| **Area** | ✅ | ✅ | ✅ | ⚠️ | 🟡 | ➖ | ➖ | 🔶 |
+| **Tag** | ✅ | ✅ | ✅ | ⚠️ | 🟡 | ✅ | ➖ | 🔶 |
+| **Heading** | 🟡 | 🟡 | 🟡 | 🔶 | 🔶 | 🔶 | ✅ | ➖ |
+| **Checklist item** | ✅ | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | ✅ | ➖ |
+| **Recurrence** | ❌ | 🟡 | ❌ | ❌ | ➖ | ➖ | ➖ | ➖ |
 
-✅ works directly · 🟡 needs a cheap workaround · 🔶 needs an expensive workaround (rebuild the
-parent, or restore from a backup) · ⚠️ works but is **irreversible** · ❌ impossible by any route,
+**Columns** — C create · R read · U update (rename and edit alike) · D delete · Dup duplicate ·
+Move move · Done complete or cancel · Rest restore from the Trash
+
+**Cells** — ✅ works directly · 🟡 cheap validated workaround · 🔶 expensive workaround (rebuild the
+parent, or restore from a backup) · ⚠️ works but **irreversible** · ❌ impossible by any route,
 including composition · ➖ not applicable
 
 Every cell has an exact, tested command in **[docs/PLAYBOOK.md](docs/PLAYBOOK.md)**.
