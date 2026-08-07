@@ -35,8 +35,8 @@ those claims matter as much as features, so both are recorded here.
 - Guarantee layer: backup, post-write verification, recurrence guard, classified retries.
 - Checklist editing via full-list replacement.
 
-### Corrections to the official documentation
-- `checklist-items` is documented as create-only but works on `operation: update`, replacing the
-  whole list. It is the only way to edit an existing checklist item.
-- `append-checklist-items` and `prepend-checklist-items` are documented as working. They do
-  nothing: the request is accepted, nothing changes, no error is reported.
+### Behaviour that differs from the reference
+- `checklist-items` is listed among create attributes, but works on `operation: update` and
+  replaces the whole list. It is the only way to edit an existing checklist item.
+- `append-checklist-items` and `prepend-checklist-items` are no-ops: the request is accepted,
+  nothing changes, no error is reported.

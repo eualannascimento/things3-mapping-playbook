@@ -3,8 +3,10 @@
 A verified map of what Things 3 automation can and cannot do — and the code to do it safely.
 
 Everything here was executed against a real Things install (3.22.11, macOS 26.5) and verified by
-re-reading the result. Nothing is copied from documentation. That matters, because **the official
-documentation is wrong in at least one place** and the community tools inherit the mistake.
+re-reading the result, rather than taken from a reference. That distinction matters: on this
+platform, **behaviour and documentation don't always line up**, in both directions — some things
+described as available turn out to be no-ops, and some of the most useful capabilities aren't
+described at all.
 
 ## Why this exists
 
@@ -48,8 +50,8 @@ Every cell has an exact, tested command in **[docs/PLAYBOOK.md](docs/PLAYBOOK.md
 
 | Finding | Why it matters |
 |---|---|
-| `checklist-items` works on `operation: update` and **replaces the whole list** | The only way to edit the text of an existing checklist item. Documented as create-only |
-| `append-checklist-items` / `prepend-checklist-items` **do nothing** | Documented as working. Accepts the request, changes nothing, reports no error |
+| `checklist-items` works on `operation: update` and **replaces the whole list** | The only way to edit the text of an existing checklist item. Listed among create attributes, so easy to miss |
+| `append-checklist-items` / `prepend-checklist-items` are **no-ops** | The request is accepted, nothing changes, no error is reported — so code using them fails silently |
 | A heading is addressable as `to do id "<uuid>"` | The only way to rename a heading, even though `heading` is not a class in the dictionary |
 | Recurrence is a **binary plist** in `TMTask.rt1_recurrenceRule` | Readable. Still unwritable — which is exactly why a guard needs to read it |
 | `open -g -j` keeps Things in the background | Without the flags, a closed Things steals the user's focus |

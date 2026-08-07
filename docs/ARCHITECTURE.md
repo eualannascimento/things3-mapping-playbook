@@ -60,8 +60,9 @@ The exact command for each cell is in [PLAYBOOK.md](PLAYBOOK.md); the full API i
    corrected list can be rebuilt without losing what was checked, the uuid, recurrence or history.
    It is the only way to edit the text of an existing subtask.
 
-2. **`append-checklist-items` and `prepend-checklist-items` do nothing**, despite being documented.
-   The request is accepted, nothing changes, no error is reported.
+2. **`append-checklist-items` and `prepend-checklist-items` are no-ops.** The request is accepted,
+   nothing changes, and no error is reported — the worst failure mode, since code using them looks
+   like it works.
 
 3. **`open -g -j` avoids bringing the app forward.** With Things closed, plain `open` steals focus;
    with both flags the operation happens the same and focus stays put.

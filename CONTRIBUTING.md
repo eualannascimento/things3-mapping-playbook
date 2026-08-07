@@ -47,7 +47,7 @@ These cost real time to discover. They are in [docs/PLAYBOOK.md](docs/PLAYBOOK.m
 - `move ... to` is typed as `list`; use `set project of` / `set area of` for projects and areas.
 - `delete (to do id "…")` fails intermittently with `-1728` on objects that read fine through the
   same specifier. `move … to list "Trash"` does the same thing and has never failed.
-- `append-checklist-items` does nothing, despite being documented.
+- `append-checklist-items` is a no-op: accepted, silently ineffective.
 - Deleting while iterating a live collection fails partway through.
 - `sdef` needs full Xcode; without it, it returns empty and every grep becomes a false negative.
 

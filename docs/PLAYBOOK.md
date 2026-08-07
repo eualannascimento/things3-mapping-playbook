@@ -1,8 +1,8 @@
 # Playbook — the exact command for every action
 
 One recipe per cell of the capability matrix. **Everything here was executed live** against Things
-3 (3.22.11, macOS 26.5) and verified by re-reading the result. Nothing is inferred from the
-documentation — not least because the official docs are wrong in at least one place (see
+3 (3.22.11, macOS 26.5) and verified by re-reading the result, rather than inferred from a
+reference — because on this platform behaviour and documentation don't always line up (see
 `append-checklist-items`).
 
 ## Notation
@@ -119,7 +119,7 @@ only way to read them.
 |---|---|
 | **Read** 🟡 | `SQL: SELECT title,status,"index" FROM TMChecklistItem WHERE task=? ORDER BY "index"` (`status`: 0 open, 3 completed) |
 | **Create** with the to-do | `URL: {"type":"to-do","attributes":{"checklist-items":[{"type":"checklist-item","attributes":{"title":"X","completed":false}}]}}` |
-| **Append** to an existing to-do 🟡 | **`append-checklist-items` DOES NOT WORK**, despite being documented. Use the list replacement below |
+| **Append** to an existing to-do 🟡 | `append-checklist-items` is a **no-op** — accepted, silently ineffective. Use the list replacement below |
 | **Rename / Edit** an item 🟡 | read the whole list, change the item, and **replace the entire list**: `URL+T: {"attributes":{"checklist-items":[...full corrected list...]}}`. Resend `completed` for every item, or whatever was checked is lost |
 | **Delete** an item 🟡 | same replacement, omitting the item |
 | **Move** between to-dos 🟡 | replacement on **both sides**: rebuild the source without the item and the destination with it |
@@ -179,7 +179,7 @@ and explicit confirmation.
 |---|---|
 | `move ... to project` (instead of `set project of`) | fails with `Cannot move to-do (301)` |
 | `open` without `-g -j` | steals the user's focus when the app is closed |
-| `append-checklist-items` | does nothing, silently — despite being documented |
+| `append-checklist-items` | a no-op: accepted, silently ineffective |
 | Replacing a checklist without resending `completed` | everything that was checked is lost |
 | Trusting the return code | "move an area to the Trash" returns success and does nothing |
 | `repeat with t in to dos ... delete t` | fails halfway: deleting mutates the collection. Snapshot the ids first |
