@@ -13,3 +13,6 @@ dev = ["pytest>=7.0"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+# The live suite talks to a real Things install and is opt-in: `pytest -m live`.
+addopts = "-m 'not live'"
+markers = ["live: talks to a real Things 3 install (opt-in, macOS only)"]
