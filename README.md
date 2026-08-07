@@ -87,6 +87,36 @@ Requires macOS with Things 3. Editing existing checklist items additionally need
 export THINGS_AUTH_TOKEN="..."
 ```
 
+## Start here
+
+```bash
+python3 -m things3.cli doctor
+```
+
+Most "it doesn't work" reports come down to a handful of causes, each producing an error far from
+its root: automation permission never granted looks like a missing object; Things never launched
+looks like a missing database; a token in `~/.zshrc` instead of `~/.zshenv` looks like an update
+that silently did nothing. `doctor` names the cause and the fix.
+
+```
+  [  ok] Things 3 installed: version 3.22.11
+  [  ok] Database readable: 549 rows in TMTask
+  [  ok] AppleScript permission: granted
+  [warn] THINGS_AUTH_TOKEN: not set (only needed to edit existing checklist items)
+```
+
+## CLI
+
+Anything destructive is a dry run unless you pass `--apply`.
+
+```bash
+things3 show <uuid>                       # item + checklist + recurrence, all in one place
+things3 checklist <uuid> --rename "Old=New"       # dry run
+things3 checklist <uuid> --rename "Old=New" --apply
+things3 delete todo <uuid> --apply        # native Trash, restorable
+things3 delete area "Health" --by-name --apply --allow-irreversible
+```
+
 ## Usage
 
 ```python

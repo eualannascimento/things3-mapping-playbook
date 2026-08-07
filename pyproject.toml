@@ -1,9 +1,12 @@
 [project]
 name = "things3-mapping-playbook"
-version = "0.1.0"
+version = "0.2.0"
 description = "A verified map of what Things 3 automation can and cannot do, plus the code to do it safely"
 requires-python = ">=3.10"
 dependencies = []
+
+[project.scripts]
+things3 = "things3.cli:main"
 
 [project.optional-dependencies]
 dev = ["pytest>=7.0"]
