@@ -48,6 +48,24 @@ class Outcome:
     backup_path: Path | None = None
 
 
+def _trash_statement(kind: Kind, spec: str) -> str:
+    """Pick the statement that actually works for sending something away.
+
+    `delete` and `move ... to list "Trash"` are documented as equivalent for
+    to-dos and projects, and both land the item in the Trash. They are not
+    equally reliable: `delete (to do id "...")` intermittently fails with -1728
+    ("can't get to do id") on objects that are readable by the very same
+    specifier a moment earlier. `move ... to list "Trash"` has never failed in
+    testing, so it is what this library uses.
+
+    Areas and tags have no Trash, so `delete` is the only route -- and it is
+    permanent, which is why callers must opt in.
+    """
+    if kind in REVERSIBLE_DELETE:
+        return f'  move ({spec}) to list "Trash"'
+    return f"  delete ({spec})"
+
+
 def _specifier(kind: Kind, identifier: str, *, by_id: bool) -> str:
     """Build an AppleScript specifier.
 
@@ -166,7 +184,7 @@ def delete(conn, kind: Kind, identifier: str, *, by_id: bool = True,
         guards.refuse_if_repeating(conn, identifier, "delete")
 
     spec = _specifier(kind, identifier, by_id=by_id)
-    result = applescript.run(f"  delete ({spec})")
+    result = applescript.run(_trash_statement(kind, spec))
     if not result.ok:
         return Outcome(False, result.stderr.strip(), backup_path)
 
@@ -240,9 +258,8 @@ def delete_many(conn, kind: Kind, uuids: list[str]) -> dict[str, str]:
     for uuid in uuids:
         if kind is Kind.TODO:
             guards.refuse_if_repeating(conn, uuid, "delete")
+    spec_kind = "to do" if kind is Kind.TODO else "project"
     return applescript.run_batch([
-        (uuid, f'delete (to do id "{applescript.escape(uuid)}")'
-               if kind is Kind.TODO
-               else f'delete (project id "{applescript.escape(uuid)}")')
+        (uuid, f'move ({spec_kind} id "{applescript.escape(uuid)}") to list "Trash"')
         for uuid in uuids
     ])
