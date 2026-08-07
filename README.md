@@ -90,7 +90,7 @@ export THINGS_AUTH_TOKEN="..."
 ## Usage
 
 ```python
-from things3 import read, checklist
+from things3 import read, ops, checklist
 
 conn = read.connect()
 
@@ -98,12 +98,31 @@ conn = read.connect()
 items = read.checklist_items(conn, "task-uuid")
 print(read.recurrence(conn, "task-uuid"))   # {'every': 1, 'unit': 'weekly', 'weekdays': [1, 3]}
 
+# Everyday operations, with the guards applied
+ops.create(ops.Kind.TODO, "Buy bread")
+ops.move("task-uuid", to_project="Groceries")   # uses `set project of`, not the 301 trap
+ops.delete(conn, ops.Kind.TODO, "task-uuid")    # native Trash, reversible
+ops.restore(ops.Kind.TODO, "task-uuid")
+
 # Fix a checklist item's text -- dry run first
 plan = checklist.plan(conn, "task-uuid", rename={"Drink watre": "Drink water"})
 print(plan.after)
 
 # Apply: backs up, replaces the list, verifies against SQLite
 checklist.apply(conn, plan)
+```
+
+The guards are not advisory — they refuse:
+
+```python
+ops.delete(conn, ops.Kind.TODO, "repeating-task-uuid")
+# RecurrenceGuardError: recurrence cannot be recreated by any Things API
+
+ops.delete(conn, ops.Kind.AREA, "Health")
+# ConfirmationRequired: irreversible, does not go to the Trash
+
+ops.delete(conn, ops.Kind.AREA, "Health", allow_irreversible=True)
+# proceeds, and writes a backup of which items belonged to it first
 ```
 
 ## Docs

@@ -9,7 +9,7 @@ See docs/API-MAP.md for the full capability matrix and docs/PLAYBOOK.md for the
 exact command behind each one.
 """
 
-from . import applescript, checklist, guards, read, urlscheme
+from . import applescript, checklist, guards, ops, read, urlscheme
 
-__version__ = "0.1.0"
-__all__ = ["applescript", "checklist", "guards", "read", "urlscheme"]
+__version__ = "0.2.0"
+__all__ = ["applescript", "checklist", "guards", "ops", "read", "urlscheme"]
