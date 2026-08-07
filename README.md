@@ -79,8 +79,13 @@ things worse), atomicity across multiple items, and anything requiring recurrenc
 ```bash
 git clone https://github.com/eualannascimento/things3-mapping-playbook.git
 cd things3-mapping-playbook
-python3 -m pytest tests/    # no runtime dependencies
+pytest          # mocked suite, no Things needed, no runtime dependencies
+pytest -m live  # reproduces the capability matrix against your real install
 ```
+
+The live suite is how the claims above stay honest: it creates disposable objects, exercises the
+real platform, and a sweep fails the run if anything is left behind. If a Things update changes
+behaviour, a test breaks and says what it would mean.
 
 Requires macOS with Things 3. Editing existing checklist items additionally needs an auth token
 (Things → Settings → General → Enable Things URLs → Manage), read only from the environment:
@@ -164,6 +169,8 @@ ops.delete(conn, ops.Kind.AREA, "Health", allow_irreversible=True)
 - **[docs/API-MAP.md](docs/API-MAP.md)** — full AppleScript dictionary inventory, what the API does
   not cover, and live test results
 - **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** — design decisions and their reasoning
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** — one rule: a capability claim needs a live test
+- **[CHANGELOG.md](CHANGELOG.md)** — features and corrections to the claims, tracked equally
 
 ## License
 

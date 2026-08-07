@@ -1,0 +1,35 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  # Only the mocked suite runs here. The live suite needs a Mac with Things 3
+  # installed, signed in and holding real data -- CI cannot provide that, and
+  # pretending otherwise would make a green check mean less than it should.
+  unit:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: pip install pytest
+      - run: pytest -q
+
+  # Guards against the live suite silently ceasing to run: if a marker or
+  # fixture breaks, collection fails here even though nothing is executed.
+  live-collects:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pytest
+      - run: pytest tests/live -m live --collect-only -q
