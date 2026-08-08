@@ -17,8 +17,9 @@ docs and mocked tests — just say so in the PR, and don't change the matrix.
 ## Running the tests
 
 ```bash
-pytest                    # mocked suite; no Things needed, runs in CI
-pytest -m live            # talks to a real Things 3 install; opt-in
+pytest                         # mocked suite; no Things needed, runs in CI
+pytest -m 'live and not i18n'  # talks to a real Things 3 install; opt-in
+pytest -m i18n                 # also restarts Things and changes its language; opt-in
 ```
 
 The live suite creates objects prefixed `zzlive-`, tracks every one, and a session-level sweep
@@ -28,6 +29,20 @@ tracked — never build them directly.
 
 Some live tests need `THINGS_AUTH_TOKEN` (anything using `operation: update`). They skip cleanly
 without it. Export it from a file your non-interactive shell reads — `~/.zshenv`, not `~/.zshrc`.
+
+Every live test declares the playbook recipe it reproduces:
+
+```python
+@pytest.mark.verifies("todo.delete", cell="todo/D", grade="✅")
+```
+
+The run writes its results to `VERIFIED.json`, which is committed. `first_verified` records when
+the claim was first reproduced and is left alone for as long as it keeps passing, so a claim that
+has held for months is distinguishable from one verified once and never revisited.
+
+`tests/test_coverage_invariant.py` runs in CI and fails when a recipe has no test, when a test
+claims a recipe that does not exist, when two tests claim one recipe, or when the README matrix
+drifts from the ledger. Adding a recipe to the playbook without a test fails the build.
 
 ## Claiming something is impossible
 

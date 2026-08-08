@@ -14,6 +14,7 @@ reference — because on this platform behaviour and documentation don't always 
 | `URL+T:` | URL scheme with `operation: update` — **requires** `THINGS_AUTH_TOKEN` in the environment |
 | `SQL:` | Read from the local SQLite database, always `mode=ro`. Never write |
 | `<uuid>` | The object's id |
+| `list id "…"` | Built-in lists are addressed by **id**, never by name: names are localized and Things ships nine languages |
 
 Every `AS:` line goes inside `tell application "Things3" ... end tell`.
 
@@ -25,8 +26,8 @@ Every `AS:` line goes inside `tell application "Things3" ... end tell`.
 |---|---|
 | **Read** (one) | `AS: return name of to do id "<uuid>"` — or any property |
 | **Read** (bulk) | `SQL: SELECT uuid,title,notes,status,area,project,heading FROM TMTask WHERE type=0 AND trashed=0` |
-| **Read** (a list) | `AS: return name of every to do of list "Today"` |
-| **Count** | `AS: return count of to dos of list "Today"` — does not materialise the objects, so it's cheap |
+| **Read** (a list) | `AS: return name of every to do of list id "TMTodayListSource"` |
+| **Count** | `AS: return count of to dos of list id "TMTodayListSource"` — does not materialise the objects, so it's cheap |
 | **Create** | `AS: make new to do with properties {name:"Title"}` |
 | **Create** (natural language) | `AS: parse quicksilver input "Buy bread #errands"` — extracts `#tag`, **does not** extract dates |
 | **Rename** | `AS: set name of to do id "<uuid>" to "New title"` |
@@ -36,10 +37,10 @@ Every `AS:` line goes inside `tell application "Things3" ... end tell`.
 | **Edit** schedule | `AS: schedule (to do id "<uuid>") for (current date) + 86400` — `activation date` is read-only |
 | **Edit** "this evening" | `URL+T: {"attributes":{"when":"evening"}}` |
 | **Edit** reminder time | `URL+T: {"attributes":{"when":"today@15:30"}}` |
-| **Delete** | `AS: delete (to do id "<uuid>")` — goes to the **native Trash**, reversible |
-| **Restore** | `AS: move (to do id "<uuid>") to list "Anytime"` |
+| **Delete** | `AS: move (to do id "<uuid>") to list id "TMTrashListSource"` — goes to the **native Trash**, reversible. `delete` also targets the Trash but fails intermittently with `-1728`; this route has not |
+| **Restore** | `AS: move (to do id "<uuid>") to list id "TMNextListSource"` |
 | **Duplicate** 🟡 | `duplicate` fails with `-1717`. Read the properties and create a new item from them |
-| **Move** to a list | `AS: move (to do id "<uuid>") to list "Today"` |
+| **Move** to a list | `AS: move (to do id "<uuid>") to list id "TMTodayListSource"` |
 | **Move** to a project 🟡 | `AS: set project of to do id "<uuid>" to project "Name"` — do **not** use `move ... to project`, it fails with `301` |
 | **Move** to an area 🟡 | `AS: set area of to do id "<uuid>" to area "Name"` |
 | **Move** under a heading 🟡 | `URL+T: {"attributes":{"list-id":"<project-uuid>","heading-id":"<heading-uuid>"}}` |
@@ -60,7 +61,7 @@ Every `AS:` line goes inside `tell application "Things3" ... end tell`.
 | **Rename** | `AS: set name of project "Old" to "New"` |
 | **Edit** notes | `AS: set notes of project "Name" to "..."` |
 | **Delete** | `AS: delete (project id "<uuid>")` — native Trash, reversible |
-| **Restore** | `AS: move (project id "<uuid>") to list "Anytime"` |
+| **Restore** | `AS: move (project id "<uuid>") to list id "TMNextListSource"` |
 | **Duplicate** 🟡 | read properties + `make new project`; then **move** the to-dos over (prefer moving to recreating) |
 | **Move** to an area | `AS: set area of project "Name" to area "Area"` |
 | **Complete** | `AS: set status of project "Name" to completed` |

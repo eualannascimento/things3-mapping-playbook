@@ -39,6 +39,23 @@ def test_wrap_keeps_lines_within_width():
     assert all(len(line) <= 20 for line in lines)
 
 
+def test_trash_check_reports_the_localized_name(monkeypatch):
+    """Resolving the Trash by id is what makes this work in any language."""
+    monkeypatch.setattr(doctor.applescript, "run", lambda script: type(
+        "R", (), {"ok": True, "stdout": "Papierkorb", "stderr": ""})())
+    check = doctor._trash_reachable()
+    assert check.ok
+    assert "Papierkorb" in check.detail
+
+
+def test_trash_check_fails_when_the_list_cannot_be_resolved(monkeypatch):
+    monkeypatch.setattr(doctor.applescript, "run", lambda script: type(
+        "R", (), {"ok": False, "stdout": "", "stderr": "-1728"})())
+    check = doctor._trash_reachable()
+    assert not check.ok
+    assert check.fix
+
+
 # --- cli parsing -----------------------------------------------------------
 
 def test_destructive_commands_default_to_dry_run():

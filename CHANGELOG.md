@@ -14,6 +14,14 @@ those claims matter as much as features, so both are recorded here.
 - `ops` module: guarded create, rename, move, status, delete, restore and bulk delete.
 - CI running the mocked suite on Python 3.10–3.13, plus a job that verifies the live suite still
   collects.
+- `VERIFIED.json`: a committed record of which playbook recipes were reproduced live, when they
+  were first verified, and against which Things and macOS versions. The capability matrix in the
+  README is generated from it, so a claim cannot outlive the test behind it.
+- Coverage invariant in the mocked suite (`tests/test_coverage_invariant.py`): a recipe without a
+  test, a test claiming a recipe that does not exist, two tests claiming one recipe, or a matrix
+  out of step with the ledger all fail the build.
+- `things3/lists.py`, and an i18n suite (`pytest -m i18n`) that switches the language Things runs
+  in to prove the library does not depend on it.
 
 ### Added (continued)
 - Staleness detection on checklist writes: because the write replaces the whole list, a plan built
@@ -25,6 +33,12 @@ those claims matter as much as features, so both are recorded here.
   `delete (to do id "…")` failing intermittently with `-1728` on objects readable through the very
   same specifier moments earlier. Both routes send the item to the Trash; only one is reliable.
   This was a real bug in this library, found by the tests added in the same release.
+- **Built-in lists addressed by localized display name, not by id.** Things ships nine languages,
+  and `list "Trash"` only resolves in English. Confirmed live, not assumed: switching Things to
+  German, `list id "TMTrashListSource"` still resolved the Trash and returned its German name,
+  while `list "Trash"` failed outright. Every delete, restore, and list-based move would have
+  failed for a user running Things in German, Spanish, French, Italian, Japanese, Russian, or
+  either Chinese variant. Fixed by addressing built-in lists through `things3/lists.py`.
 
 ### Changed
 - Capability matrix uses CRUD initials and fits without horizontal scrolling. `Rename` and `Edit`
