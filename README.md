@@ -113,6 +113,14 @@ Requires macOS with Things 3. Editing existing checklist items additionally need
 export THINGS_AUTH_TOKEN="..."
 ```
 
+### As a Claude Code skill
+
+This repository is also a self-contained Claude Code skill: `SKILL.md` at the root describes when
+to use it and how, wired to the same CLI documented below — no separate scripts, no duplicated
+recipes. Clone it into `~/.claude/skills/` (or wherever your skills live) and `pip install -e .`
+once; the skill instructs Claude to run `things3 <command>` for everyday operations and to consult
+`docs/PLAYBOOK.md` for anything the CLI does not cover.
+
 ## Start here
 
 ```bash
@@ -133,10 +141,17 @@ that silently did nothing. `doctor` names the cause and the fix.
 
 ## CLI
 
-Anything destructive is a dry run unless you pass `--apply`.
+`checklist` and `delete` are dry runs unless you pass `--apply` -- the only two commands where
+something could be lost. The rest write immediately: create, rename, move and status changes are
+always reversible, so there is nothing to protect against.
 
 ```bash
 things3 show <uuid>                       # item + checklist + recurrence, all in one place
+things3 create todo "Buy bread"
+things3 rename todo <uuid> "Buy bread and milk"
+things3 move <uuid> --to-list Today       # or --to-project / --to-area
+things3 status todo <uuid> completed
+things3 restore todo <uuid>               # only to-dos and projects come back from the Trash
 things3 checklist <uuid> --rename "Old=New"       # dry run
 things3 checklist <uuid> --rename "Old=New" --apply
 things3 delete todo <uuid> --apply        # native Trash, restorable
