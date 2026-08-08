@@ -64,6 +64,27 @@ def test_a_skipped_recipe_never_enters_the_ledger(existing):
     assert "todo.rename" in merged.pending
 
 
+def test_a_recipe_that_stops_naming_a_cell_has_it_cleared():
+    """A stale cell/grade must not survive a run that no longer claims one.
+
+    Found live: a test's marker was edited to drop cell/grade, but the ledger
+    kept resurrecting the old values from the previous run, which produced a
+    matrix cell no test actually supported anymore.
+    """
+    graded = ledger.Ledger(recipes={"heading.create-in-an-existing-project": {
+        "status": "pass", "test": "t", "cell": "heading/C", "grade": "🔶",
+        "first_verified": "2026-08-01", "last_verified": "2026-08-01",
+    }})
+    merged = ledger.merge(
+        graded,
+        {"heading.create-in-an-existing-project": {"status": "pass", "test": "t"}},
+        graded.environment, today="2026-08-08",
+    )
+    entry = merged.recipes["heading.create-in-an-existing-project"]
+    assert entry["cell"] is None
+    assert entry["grade"] is None
+
+
 def test_round_trip_through_disk(existing, tmp_path):
     path = tmp_path / "VERIFIED.json"
     ledger.save(existing, path)

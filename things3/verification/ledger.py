@@ -82,8 +82,10 @@ def merge(existing: Ledger, results: dict[str, dict], environment: dict,
         recipes[recipe_id] = {
             "status": result["status"],
             "test": result["test"],
-            "cell": result.get("cell") or previous.get("cell"),
-            "grade": result.get("grade") or previous.get("grade"),
+            # No fallback to `previous` here: a test that stops naming a cell
+            # must clear it, not resurrect whatever an earlier run claimed.
+            "cell": result.get("cell"),
+            "grade": result.get("grade"),
             "first_verified": first,
             "last_verified": today,
         }
