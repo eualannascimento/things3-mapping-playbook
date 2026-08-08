@@ -81,6 +81,56 @@ def _cmd_checklist(args) -> int:
         conn.close()
 
 
+def _cmd_create(args) -> int:
+    try:
+        outcome = ops.create(ops.Kind[args.kind.upper()], args.title)
+    except ops.UnsupportedOperation as exc:
+        print(str(exc), file=sys.stderr)
+        return 1
+    print(outcome.detail)
+    return 0 if outcome.ok else 1
+
+
+def _cmd_rename(args) -> int:
+    try:
+        outcome = ops.rename(ops.Kind[args.kind.upper()], args.identifier, args.new_title,
+                             by_id=not args.by_name)
+    except ops.UnsupportedOperation as exc:
+        print(str(exc), file=sys.stderr)
+        return 1
+    print(outcome.detail)
+    return 0 if outcome.ok else 1
+
+
+def _cmd_move(args) -> int:
+    outcome = ops.move(args.uuid, to_list=args.to_list, to_project=args.to_project,
+                       to_area=args.to_area)
+    print(outcome.detail)
+    return 0 if outcome.ok else 1
+
+
+def _cmd_status(args) -> int:
+    try:
+        outcome = ops.set_status(ops.Kind[args.kind.upper()], args.identifier, args.status,
+                                 by_id=not args.by_name)
+    except ops.UnsupportedOperation as exc:
+        print(str(exc), file=sys.stderr)
+        return 1
+    print(outcome.detail)
+    return 0 if outcome.ok else 1
+
+
+def _cmd_restore(args) -> int:
+    try:
+        kwargs = {"to_list": args.to_list} if args.to_list else {}
+        outcome = ops.restore(ops.Kind[args.kind.upper()], args.identifier, **kwargs)
+    except ops.UnsupportedOperation as exc:
+        print(str(exc), file=sys.stderr)
+        return 1
+    print(outcome.detail)
+    return 0 if outcome.ok else 1
+
+
 def _cmd_delete(args) -> int:
     conn = read.connect()
     try:
@@ -128,6 +178,39 @@ def build_parser() -> argparse.ArgumentParser:
                     help="remove an item; repeatable")
     cl.add_argument("--apply", action="store_true", help="write the change (default: dry run)")
     cl.set_defaults(func=_cmd_checklist)
+
+    cr = sub.add_parser("create", help="create a to-do, project, area or tag")
+    cr.add_argument("kind", choices=[k.name.lower() for k in ops.Kind])
+    cr.add_argument("title")
+    cr.set_defaults(func=_cmd_create)
+
+    rn = sub.add_parser("rename", help="rename any item, including a heading")
+    rn.add_argument("kind", choices=[k.name.lower() for k in ops.Kind])
+    rn.add_argument("identifier", help="uuid by default; a title with --by-name")
+    rn.add_argument("new_title")
+    rn.add_argument("--by-name", action="store_true", help="identifier is a title, not a uuid")
+    rn.set_defaults(func=_cmd_rename)
+
+    mv = sub.add_parser("move", help="move a to-do to a list, project or area")
+    mv.add_argument("uuid")
+    dest = mv.add_mutually_exclusive_group(required=True)
+    dest.add_argument("--to-list", help="a built-in list name or id, e.g. Today")
+    dest.add_argument("--to-project", help="destination project title")
+    dest.add_argument("--to-area", help="destination area title")
+    mv.set_defaults(func=_cmd_move)
+
+    st = sub.add_parser("status", help="complete, cancel or reopen a to-do, project or heading")
+    st.add_argument("kind", choices=[k.name.lower() for k in ops.Kind])
+    st.add_argument("identifier", help="uuid by default; a title with --by-name")
+    st.add_argument("status", choices=["open", "completed", "canceled"])
+    st.add_argument("--by-name", action="store_true", help="identifier is a title, not a uuid")
+    st.set_defaults(func=_cmd_status)
+
+    rs = sub.add_parser("restore", help="bring a to-do or project back from the Trash")
+    rs.add_argument("kind", choices=[k.name.lower() for k in ops.Kind])
+    rs.add_argument("identifier")
+    rs.add_argument("--to-list", help="default: Anytime")
+    rs.set_defaults(func=_cmd_restore)
 
     dl = sub.add_parser("delete", help="delete an item, with the guard its type deserves")
     dl.add_argument("kind", choices=[k.name.lower() for k in ops.Kind])
