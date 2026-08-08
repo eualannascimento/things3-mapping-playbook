@@ -16,6 +16,7 @@ pytestmark = pytest.mark.live
 
 # --- the traps ---------------------------------------------------------------
 
+@pytest.mark.verifies("todo.move-to-a-project", cell="todo/Move", grade="🟡")
 def test_move_to_project_needs_set_not_move(sandbox, conn):
     """`move ... to` is typed as `list`, so a project destination fails with 301."""
     task, project = sandbox.todo(), sandbox.project()
@@ -31,13 +32,22 @@ def test_move_to_project_needs_set_not_move(sandbox, conn):
         "SELECT project FROM TMTask WHERE uuid=?", (task,)).fetchone()[0] == project
 
 
-def test_delete_sends_todo_to_the_trash_and_restore_brings_it_back(sandbox, conn):
+@pytest.mark.verifies("todo.delete", cell="todo/D", grade="✅")
+def test_delete_sends_todo_to_the_trash(sandbox, conn):
     task = sandbox.todo()
     sandbox.settle()
 
     ops.delete(conn, ops.Kind.TODO, task)
     sandbox.settle()
     assert conn.execute("SELECT trashed FROM TMTask WHERE uuid=?", (task,)).fetchone()[0] == 1
+
+
+@pytest.mark.verifies("todo.restore", cell="todo/Rest", grade="✅")
+def test_restore_brings_a_trashed_todo_back(sandbox, conn):
+    task = sandbox.todo()
+    sandbox.settle()
+    ops.delete(conn, ops.Kind.TODO, task)
+    sandbox.settle()
 
     ops.restore(ops.Kind.TODO, task)
     sandbox.settle()
@@ -60,6 +70,7 @@ def test_deleting_while_iterating_the_live_collection_fails(sandbox, conn):
 
 # --- checklist: the operation with no direct API ------------------------------
 
+@pytest.mark.verifies("checklist.rename-edit-an-item", cell="checklist/U", grade="🟡")
 def test_checklist_replacement_preserves_order_and_completed_state(sandbox, conn):
     """The core claim: editing an existing checklist item, losing nothing."""
     pytest.importorskip("os")
@@ -85,6 +96,7 @@ def test_checklist_replacement_preserves_order_and_completed_state(sandbox, conn
     assert plan.backup_path and plan.backup_path.exists(), "a backup must precede the write"
 
 
+@pytest.mark.verifies("checklist.append-to-an-existing-to-do")
 def test_append_checklist_items_does_nothing(sandbox, conn):
     """Documented as working. It is not -- this test exists to catch it changing."""
     import os
@@ -109,6 +121,7 @@ def test_append_checklist_items_does_nothing(sandbox, conn):
 
 # --- headings -----------------------------------------------------------------
 
+@pytest.mark.verifies("heading.rename", cell="heading/U", grade="🟡")
 def test_heading_is_addressable_as_a_todo_and_can_be_renamed(sandbox, conn):
     """The only route to renaming a heading, and it is not in the dictionary."""
     _project, heading = sandbox.project_with_heading("headproj", "head")
@@ -120,6 +133,7 @@ def test_heading_is_addressable_as_a_todo_and_can_be_renamed(sandbox, conn):
     ).fetchone()[0] == "zzlive-head-renamed"
 
 
+@pytest.mark.verifies("heading.delete", cell="heading/D", grade="🔶")
 def test_heading_cannot_be_deleted(sandbox, conn):
     """If this ever passes, the matrix has a 🔶 that should become ✅."""
     _project, heading = sandbox.project_with_heading("delproj", "delhead")
@@ -142,6 +156,7 @@ def test_recurrence_guard_refuses_a_real_repeating_task(conn):
         ops.delete(conn, ops.Kind.TODO, row[0])
 
 
+@pytest.mark.verifies("area.move-to-trash")
 def test_verification_catches_a_silent_no_op(sandbox, conn):
     """Moving an area to the Trash returns success and does nothing."""
     name = sandbox.area("silent-noop")

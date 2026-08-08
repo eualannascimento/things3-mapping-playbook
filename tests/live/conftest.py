@@ -23,6 +23,10 @@ PREFIX = "zzlive-"
 
 def pytest_configure(config):
     config.addinivalue_line("markers", "live: talks to a real Things 3 install")
+    config.addinivalue_line(
+        "markers",
+        "verifies(recipe, cell=None, grade=None): the playbook recipe this test reproduces",
+    )
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -139,3 +143,61 @@ def sandbox(conn):
             applescript.run(
                 f'  try\n    move ({kind} id "{identifier}") to {lists.specifier(lists.TRASH)}\n  end try'
             )
+
+
+# --- ledger: record which claims were reproduced, not just that they ran -----
+
+_RESULTS: dict[str, dict] = {}
+
+
+def _environment() -> dict:
+    """What the ledger's claims are true of."""
+    import subprocess
+    import sys
+
+    version = subprocess.run(
+        ["/usr/libexec/PlistBuddy", "-c", "Print :CFBundleShortVersionString",
+         "/Applications/Things3.app/Contents/Info.plist"],
+        capture_output=True, text=True,
+    ).stdout.strip()
+    return {
+        "things": version or "unknown",
+        "macos": platform.mac_ver()[0],
+        "python": f"{sys.version_info.major}.{sys.version_info.minor}."
+                  f"{sys.version_info.micro}",
+    }
+
+
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    outcome = yield
+    report = outcome.get_result()
+    marker = item.get_closest_marker("verifies")
+    if marker is None or report.when != "call":
+        return
+    if report.skipped:
+        status = "skip"
+    else:
+        status = "pass" if report.passed else "fail"
+    _RESULTS[marker.args[0]] = {
+        "status": status,
+        "test": item.nodeid,
+        "cell": marker.kwargs.get("cell"),
+        "grade": marker.kwargs.get("grade"),
+    }
+
+
+def pytest_sessionfinish(session, exitstatus):
+    if not _RESULTS:
+        return
+    from datetime import date
+
+    from things3.verification import ledger as ledger_module
+
+    current = ledger_module.load()
+    if not current.untestable:
+        current.untestable = dict(ledger_module.UNTESTABLE)
+    merged = ledger_module.merge(
+        current, _RESULTS, _environment(), today=date.today().isoformat()
+    )
+    ledger_module.save(merged)
