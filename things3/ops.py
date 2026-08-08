@@ -16,7 +16,7 @@ from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 
-from . import applescript, guards, read
+from . import applescript, guards, lists, read
 
 
 class Kind(str, Enum):
@@ -51,18 +51,19 @@ class Outcome:
 def _trash_statement(kind: Kind, spec: str) -> str:
     """Pick the statement that actually works for sending something away.
 
-    `delete` and `move ... to list "Trash"` are documented as equivalent for
+    `delete` and moving to the Trash by id are documented as equivalent for
     to-dos and projects, and both land the item in the Trash. They are not
     equally reliable: `delete (to do id "...")` intermittently fails with -1728
     ("can't get to do id") on objects that are readable by the very same
-    specifier a moment earlier. `move ... to list "Trash"` has never failed in
-    testing, so it is what this library uses.
+    specifier a moment earlier. Moving to the Trash has never failed in
+    testing, so it is what this library uses -- addressed by id, not by the
+    localized display name, so it works whichever language Things runs in.
 
     Areas and tags have no Trash, so `delete` is the only route -- and it is
     permanent, which is why callers must opt in.
     """
     if kind in REVERSIBLE_DELETE:
-        return f'  move ({spec}) to list "Trash"'
+        return f"  move ({spec}) to {lists.specifier(lists.TRASH)}"
     return f"  delete ({spec})"
 
 
@@ -115,6 +116,22 @@ def rename(kind: Kind, identifier: str, new_title: str, *, by_id: bool = True) -
     return Outcome(result.ok, result.stderr.strip() or new_title)
 
 
+def _list_specifier(to_list: str) -> str:
+    """Accept either a stable list id or an English display name.
+
+    Passing a name for a built-in list still works, because it is what earlier
+    versions of this library documented, but it resolves to the id -- so the
+    call stops depending on the language the user runs Things in. Anything
+    else (a custom list this module does not know) falls back to the escaped
+    name, exactly as before this change.
+    """
+    if to_list in lists.BY_ENGLISH_NAME:
+        return lists.specifier(lists.BY_ENGLISH_NAME[to_list])
+    if to_list in lists.BY_ENGLISH_NAME.values():
+        return lists.specifier(to_list)
+    return f'list "{applescript.escape(to_list)}"'
+
+
 def move(task_uuid: str, *, to_list: str | None = None, to_project: str | None = None,
          to_area: str | None = None) -> Outcome:
     """Move a to-do.
@@ -125,7 +142,7 @@ def move(task_uuid: str, *, to_list: str | None = None, to_project: str | None =
     """
     spec = f'to do id "{applescript.escape(task_uuid)}"'
     if to_list:
-        body = f'  move ({spec}) to list "{applescript.escape(to_list)}"'
+        body = f'  move ({spec}) to {_list_specifier(to_list)}'
     elif to_project:
         body = f'  set project of {spec} to project "{applescript.escape(to_project)}"'
     elif to_area:
@@ -205,7 +222,7 @@ def restore(kind: Kind, identifier: str, *, to_list: str = "Anytime") -> Outcome
             "nothing to restore. Rebuild it from the backup taken at deletion."
         )
     spec = _specifier(kind, identifier, by_id=True)
-    result = applescript.run(f'  move ({spec}) to list "{applescript.escape(to_list)}"')
+    result = applescript.run(f'  move ({spec}) to {_list_specifier(to_list)}')
     return Outcome(result.ok, result.stderr.strip() or f"restored to {to_list}")
 
 
@@ -260,6 +277,7 @@ def delete_many(conn, kind: Kind, uuids: list[str]) -> dict[str, str]:
             guards.refuse_if_repeating(conn, uuid, "delete")
     spec_kind = "to do" if kind is Kind.TODO else "project"
     return applescript.run_batch([
-        (uuid, f'move ({spec_kind} id "{applescript.escape(uuid)}") to list "Trash"')
+        (uuid, f'move ({spec_kind} id "{applescript.escape(uuid)}") '
+               f'to {lists.specifier(lists.TRASH)}')
         for uuid in uuids
     ])

@@ -16,7 +16,7 @@ import time
 
 import pytest
 
-from things3 import applescript, ops, read, urlscheme
+from things3 import applescript, lists, ops, read, urlscheme
 
 PREFIX = "zzlive-"
 
@@ -53,7 +53,7 @@ def sweep_after_session(require_things):
         for uuid, _title, kind in leftovers:
             spec = "project" if kind == 1 else "to do"
             applescript.run(
-                f'  try\n    move ({spec} id "{uuid}") to list "Trash"\n  end try'
+                f'  try\n    move ({spec} id "{uuid}") to {lists.specifier(lists.TRASH)}\n  end try'
             )
 
         areas = conn.execute(
@@ -137,5 +137,5 @@ def sandbox(conn):
             )
         else:
             applescript.run(
-                f'  try\n    move ({kind} id "{identifier}") to list "Trash"\n  end try'
+                f'  try\n    move ({kind} id "{identifier}") to {lists.specifier(lists.TRASH)}\n  end try'
             )
