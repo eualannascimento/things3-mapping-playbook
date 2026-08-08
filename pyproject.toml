@@ -27,4 +27,4 @@ markers = [
 ]
 
 [tool.setuptools]
-packages = ["things3"]
+packages = ["things3", "things3.verification"]
