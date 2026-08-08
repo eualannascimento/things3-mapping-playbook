@@ -32,4 +32,4 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install -e '.[dev]'
-      - run: pytest tests/live -m live --collect-only -q
+      - run: pytest tests/live -m 'live or i18n' --collect-only -q

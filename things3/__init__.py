@@ -11,5 +11,5 @@ exact command behind each one.
 
 from . import applescript, checklist, guards, ops, read, urlscheme
 
-__version__ = "0.2.0"
+__version__ = "0.4.0"
 __all__ = ["applescript", "checklist", "guards", "ops", "read", "urlscheme"]

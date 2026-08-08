@@ -78,8 +78,9 @@ def test_restoring_an_area_is_refused_with_the_reason(fake_run):
 
 
 def test_restoring_a_todo_moves_it_out_of_the_trash(fake_run):
+    """Anytime is a built-in list, addressed by id -- not by localized name."""
     ops.restore(ops.Kind.TODO, "uuid")
-    assert 'to list "Anytime"' in fake_run[0]
+    assert 'to list id "TMNextListSource"' in fake_run[0]
 
 
 def test_area_can_be_rebuilt_from_its_backup(monkeypatch, fake_run):
@@ -99,8 +100,15 @@ def test_moving_to_a_project_uses_set_not_move(fake_run):
 
 
 def test_moving_to_a_list_uses_move(fake_run):
+    """Today is a built-in list, addressed by id -- not by localized name."""
     ops.move("uuid", to_list="Today")
-    assert 'move (to do id "uuid") to list "Today"' in fake_run[0]
+    assert 'move (to do id "uuid") to list id "TMTodayListSource"' in fake_run[0]
+
+
+def test_moving_to_an_unknown_list_falls_back_to_the_escaped_name(fake_run):
+    """A custom list this module does not know keeps working, as before."""
+    ops.move("uuid", to_list="My Custom List")
+    assert 'move (to do id "uuid") to list "My Custom List"' in fake_run[0]
 
 
 def test_move_requires_a_destination(fake_run):

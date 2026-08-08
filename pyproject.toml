@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "things3-mapping-playbook"
-version = "0.2.0"
+version = "0.4.0"
 description = "A verified map of what Things 3 automation can and cannot do, plus the code to do it safely"
 requires-python = ">=3.10"
 dependencies = []
@@ -18,8 +18,13 @@ dev = ["pytest>=7.0"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 # The live suite talks to a real Things install and is opt-in: `pytest -m live`.
-addopts = "-m 'not live'"
-markers = ["live: talks to a real Things 3 install (opt-in, macOS only)"]
+# The i18n suite additionally restarts Things and changes its language setting,
+# so it is excluded even from a live run unless asked for by name.
+addopts = "-m 'not live and not i18n'"
+markers = [
+    "live: talks to a real Things 3 install (opt-in, macOS only)",
+    "i18n: temporarily changes the language Things runs in (opt-in, restarts the app)",
+]
 
 [tool.setuptools]
-packages = ["things3"]
+packages = ["things3", "things3.verification"]

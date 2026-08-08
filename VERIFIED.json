@@ -1,0 +1,615 @@
+{
+  "environment": {
+    "things": "3.22.11",
+    "macos": "26.5.2",
+    "python": "3.14.5"
+  },
+  "untestable": {
+    "app.empty-the-trash": "irreversible and global; this project's own rule is never to call it",
+    "app.archive-completed": "archives every completed item in the user's database, not just the sandbox",
+    "app.quick-entry-panel": "takes over the user's screen; cannot run unattended"
+  },
+  "pending": [],
+  "recipes": {
+    "app.built-in-lists": {
+      "status": "pass",
+      "test": "tests/live/test_app.py::test_built_in_lists_are_nine_not_seven",
+      "cell": null,
+      "grade": null,
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "app.current-list": {
+      "status": "pass",
+      "test": "tests/live/test_app.py::test_current_list_returns_a_name",
+      "cell": null,
+      "grade": null,
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "app.ui-selection": {
+      "status": "pass",
+      "test": "tests/live/test_app.py::test_ui_selection_returns_a_list_without_erroring",
+      "cell": null,
+      "grade": null,
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "area.create": {
+      "status": "pass",
+      "test": "tests/live/test_area.py::test_create_makes_an_area_reachable_by_name",
+      "cell": "area/C",
+      "grade": "✅",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "area.delete": {
+      "status": "pass",
+      "test": "tests/live/test_area.py::test_delete_is_irreversible_and_orphans_its_items",
+      "cell": "area/D",
+      "grade": "⚠️",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "area.duplicate": {
+      "status": "pass",
+      "test": "tests/live/test_area.py::test_duplicate_is_read_properties_then_recreate",
+      "cell": "area/Dup",
+      "grade": "🟡",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "area.edit-collapsed-state": {
+      "status": "pass",
+      "test": "tests/live/test_area.py::test_edit_collapsed_state_toggles_the_flag",
+      "cell": null,
+      "grade": null,
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "area.edit-tags": {
+      "status": "pass",
+      "test": "tests/live/test_area.py::test_edit_tags_applies_a_tag_to_the_area",
+      "cell": null,
+      "grade": null,
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "area.move-to-trash": {
+      "status": "pass",
+      "test": "tests/live/test_area.py::test_verification_catches_a_silent_no_op",
+      "cell": null,
+      "grade": null,
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "area.read": {
+      "status": "pass",
+      "test": "tests/live/test_area.py::test_read_returns_the_area_name",
+      "cell": "area/R",
+      "grade": "✅",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "area.rename": {
+      "status": "pass",
+      "test": "tests/live/test_area.py::test_rename_changes_the_title_in_place",
+      "cell": "area/U",
+      "grade": "✅",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "area.restore": {
+      "status": "pass",
+      "test": "tests/live/test_area.py::test_restore_needs_a_backup_taken_before_deletion",
+      "cell": "area/Rest",
+      "grade": "🔶",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "checklist.append-to-an-existing-to-do": {
+      "status": "pass",
+      "test": "tests/live/test_checklist.py::test_append_checklist_items_does_nothing",
+      "cell": null,
+      "grade": null,
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "checklist.complete-an-item": {
+      "status": "pass",
+      "test": "tests/live/test_checklist.py::test_complete_an_item_sets_completed_true",
+      "cell": "checklist/Done",
+      "grade": "✅",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "checklist.create-with-the-to-do": {
+      "status": "pass",
+      "test": "tests/live/test_checklist.py::test_create_with_the_to_do_sends_items_in_the_creation_payload",
+      "cell": "checklist/C",
+      "grade": "✅",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "checklist.delete-an-item": {
+      "status": "pass",
+      "test": "tests/live/test_checklist.py::test_delete_an_item_omits_it_from_the_replacement",
+      "cell": "checklist/D",
+      "grade": "🟡",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "checklist.limit": {
+      "status": "pass",
+      "test": "tests/live/test_checklist.py::test_limit_refuses_over_100_items_rather_than_truncating",
+      "cell": null,
+      "grade": null,
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "checklist.move-between-to-dos": {
+      "status": "pass",
+      "test": "tests/live/test_checklist.py::test_move_between_to_dos_replaces_both_sides",
+      "cell": "checklist/Move",
+      "grade": "🟡",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "checklist.read": {
+      "status": "pass",
+      "test": "tests/live/test_checklist.py::test_read_orders_items_by_index",
+      "cell": "checklist/R",
+      "grade": "🟡",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "checklist.rename-edit-an-item": {
+      "status": "pass",
+      "test": "tests/live/test_checklist.py::test_rename_replaces_the_whole_list_and_preserves_state",
+      "cell": "checklist/U",
+      "grade": "🟡",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "heading.create": {
+      "status": "pass",
+      "test": "tests/live/test_heading.py::test_create_only_happens_alongside_the_project",
+      "cell": "heading/C",
+      "grade": "🟡",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "heading.create-in-an-existing-project": {
+      "status": "pass",
+      "test": "tests/live/test_heading.py::test_create_in_an_existing_project_has_no_route",
+      "cell": null,
+      "grade": null,
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "heading.delete": {
+      "status": "pass",
+      "test": "tests/live/test_heading.py::test_delete_has_no_direct_command",
+      "cell": "heading/D",
+      "grade": "🔶",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "heading.duplicate": {
+      "status": "pass",
+      "test": "tests/live/test_heading.py::test_duplicate_fails_directly_and_must_rebuild_via_the_project",
+      "cell": "heading/Dup",
+      "grade": "🔶",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "heading.edit-status": {
+      "status": "pass",
+      "test": "tests/live/test_heading.py::test_edit_status_writes_completed",
+      "cell": "heading/Done",
+      "grade": "✅",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "heading.move-between-projects": {
+      "status": "pass",
+      "test": "tests/live/test_heading.py::test_move_between_projects_runs_but_has_no_effect",
+      "cell": "heading/Move",
+      "grade": "🔶",
+      "first_verified": "2026-08-08",
+      "last_verified": "2026-08-08"
+    },
+    "heading.read": {
+      "status": "pass",
+      "test": "tests/live/test_heading.py::test_read_lists_headings_from_sqlite",
+      "cell": "heading/R",
+      "grade": "🟡",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "heading.read-one-by-uuid": {
+      "status": "pass",
+      "test": "tests/live/test_heading.py::test_read_one_by_uuid_returns_its_name",
+      "cell": null,
+      "grade": null,
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "heading.rename": {
+      "status": "pass",
+      "test": "tests/live/test_heading.py::test_rename_is_the_only_route_that_works",
+      "cell": "heading/U",
+      "grade": "🟡",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "project.add-a-heading-after-creation": {
+      "status": "pass",
+      "test": "tests/live/test_project.py::test_add_a_heading_after_creation_needs_a_new_project",
+      "cell": "heading/Move",
+      "grade": "🔶",
+      "first_verified": "2026-08-08",
+      "last_verified": "2026-08-08"
+    },
+    "project.complete": {
+      "status": "pass",
+      "test": "tests/live/test_project.py::test_complete_sets_status_completed",
+      "cell": "project/Done",
+      "grade": "✅",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "project.create": {
+      "status": "pass",
+      "test": "tests/live/test_project.py::test_create_makes_a_project_reachable_by_its_returned_uuid",
+      "cell": "project/C",
+      "grade": "✅",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "project.create-with-headings": {
+      "status": "pass",
+      "test": "tests/live/test_project.py::test_create_with_headings_is_the_only_way_to_have_headings",
+      "cell": "heading/C",
+      "grade": "🟡",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "project.delete": {
+      "status": "pass",
+      "test": "tests/live/test_project.py::test_delete_sends_a_project_to_the_native_trash",
+      "cell": "project/D",
+      "grade": "✅",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "project.duplicate": {
+      "status": "pass",
+      "test": "tests/live/test_project.py::test_duplicate_is_read_properties_then_recreate",
+      "cell": "project/Dup",
+      "grade": "🟡",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "project.edit-notes": {
+      "status": "pass",
+      "test": "tests/live/test_project.py::test_edit_notes_sets_the_notes_field",
+      "cell": null,
+      "grade": null,
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "project.move-to-an-area": {
+      "status": "pass",
+      "test": "tests/live/test_project.py::test_move_to_an_area_uses_set_area_of",
+      "cell": "project/Move",
+      "grade": "✅",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "project.read": {
+      "status": "pass",
+      "test": "tests/live/test_project.py::test_read_returns_the_project_name",
+      "cell": "project/R",
+      "grade": "✅",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "project.read-its-to-dos": {
+      "status": "pass",
+      "test": "tests/live/test_project.py::test_read_its_to_dos_lists_todos_inside_the_project",
+      "cell": null,
+      "grade": null,
+      "first_verified": "2026-08-08",
+      "last_verified": "2026-08-08"
+    },
+    "project.rename": {
+      "status": "pass",
+      "test": "tests/live/test_project.py::test_rename_changes_the_title_in_place",
+      "cell": "project/U",
+      "grade": "✅",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "project.restore": {
+      "status": "pass",
+      "test": "tests/live/test_project.py::test_restore_brings_a_trashed_project_back",
+      "cell": "project/Rest",
+      "grade": "✅",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "tag.apply-to-an-item": {
+      "status": "pass",
+      "test": "tests/live/test_tag.py::test_apply_to_an_item_replaces_the_whole_list",
+      "cell": null,
+      "grade": null,
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "tag.create": {
+      "status": "pass",
+      "test": "tests/live/test_tag.py::test_create_makes_a_tag_reachable_by_name",
+      "cell": "tag/C",
+      "grade": "✅",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "tag.delete": {
+      "status": "pass",
+      "test": "tests/live/test_tag.py::test_delete_is_irreversible_and_does_not_go_through_the_trash",
+      "cell": "tag/D",
+      "grade": "⚠️",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "tag.duplicate": {
+      "status": "pass",
+      "test": "tests/live/test_tag.py::test_duplicate_is_read_properties_then_recreate",
+      "cell": "tag/Dup",
+      "grade": "🟡",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "tag.edit-hierarchy": {
+      "status": "pass",
+      "test": "tests/live/test_tag.py::test_edit_hierarchy_sets_the_parent_tag",
+      "cell": "tag/Move",
+      "grade": "✅",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "tag.edit-shortcut": {
+      "status": "pass",
+      "test": "tests/live/test_tag.py::test_edit_shortcut_sets_the_keyboard_shortcut",
+      "cell": null,
+      "grade": null,
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "tag.read": {
+      "status": "pass",
+      "test": "tests/live/test_tag.py::test_read_returns_the_tag_name",
+      "cell": "tag/R",
+      "grade": "✅",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "tag.rename": {
+      "status": "pass",
+      "test": "tests/live/test_tag.py::test_rename_propagates_to_tagged_items",
+      "cell": "tag/U",
+      "grade": "✅",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "tag.restore": {
+      "status": "pass",
+      "test": "tests/live/test_tag.py::test_restore_needs_a_backup_taken_before_deletion",
+      "cell": "tag/Rest",
+      "grade": "🔶",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "todo.cancel": {
+      "status": "pass",
+      "test": "tests/live/test_todo.py::test_cancel_sets_status_canceled",
+      "cell": null,
+      "grade": null,
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "todo.complete": {
+      "status": "pass",
+      "test": "tests/live/test_todo.py::test_complete_sets_status_completed",
+      "cell": "todo/Done",
+      "grade": "✅",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "todo.count": {
+      "status": "pass",
+      "test": "tests/live/test_todo.py::test_count_reports_without_materialising_objects",
+      "cell": null,
+      "grade": null,
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "todo.create": {
+      "status": "pass",
+      "test": "tests/live/test_todo.py::test_create_makes_a_todo_reachable_by_its_returned_uuid",
+      "cell": "todo/C",
+      "grade": "✅",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "todo.create-natural-language": {
+      "status": "pass",
+      "test": "tests/live/test_todo.py::test_natural_language_extracts_a_tag_but_not_a_date",
+      "cell": null,
+      "grade": null,
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "todo.delete": {
+      "status": "pass",
+      "test": "tests/live/test_todo.py::test_delete_sends_a_todo_to_the_native_trash",
+      "cell": "todo/D",
+      "grade": "✅",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "todo.duplicate": {
+      "status": "pass",
+      "test": "tests/live/test_todo.py::test_duplicate_fails_directly_but_recreating_from_properties_works",
+      "cell": "todo/Dup",
+      "grade": "🟡",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "todo.edit-deadline": {
+      "status": "pass",
+      "test": "tests/live/test_todo.py::test_edit_deadline_sets_the_due_date",
+      "cell": null,
+      "grade": null,
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "todo.edit-notes": {
+      "status": "pass",
+      "test": "tests/live/test_todo.py::test_edit_notes_survives_multiline_quotes_and_accents",
+      "cell": null,
+      "grade": null,
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "todo.edit-reminder-time": {
+      "status": "pass",
+      "test": "tests/live/test_todo.py::test_edit_reminder_time_needs_the_url_scheme_and_a_token",
+      "cell": null,
+      "grade": null,
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "todo.edit-schedule": {
+      "status": "pass",
+      "test": "tests/live/test_todo.py::test_edit_schedule_sets_the_start_date",
+      "cell": null,
+      "grade": null,
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "todo.edit-tags": {
+      "status": "pass",
+      "test": "tests/live/test_todo.py::test_edit_tags_requires_the_tag_to_already_exist",
+      "cell": null,
+      "grade": null,
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "todo.edit-this-evening": {
+      "status": "pass",
+      "test": "tests/live/test_todo.py::test_edit_this_evening_needs_the_url_scheme_and_a_token",
+      "cell": null,
+      "grade": null,
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "todo.move-to-a-list": {
+      "status": "pass",
+      "test": "tests/live/test_todo.py::test_move_to_a_list_reaches_a_built_in_list_by_id",
+      "cell": null,
+      "grade": null,
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "todo.move-to-a-project": {
+      "status": "pass",
+      "test": "tests/live/test_todo.py::test_move_to_project_needs_set_not_move",
+      "cell": "todo/Move",
+      "grade": "🟡",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "todo.move-to-an-area": {
+      "status": "pass",
+      "test": "tests/live/test_todo.py::test_move_to_an_area_uses_set_area_of",
+      "cell": null,
+      "grade": null,
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "todo.move-under-a-heading": {
+      "status": "pass",
+      "test": "tests/live/test_todo.py::test_move_under_a_heading_needs_the_url_scheme_and_a_token",
+      "cell": null,
+      "grade": null,
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "todo.read-a-list": {
+      "status": "pass",
+      "test": "tests/live/test_todo.py::test_read_a_list_returns_todos_of_a_built_in_list",
+      "cell": null,
+      "grade": null,
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "todo.read-bulk": {
+      "status": "pass",
+      "test": "tests/live/test_todo.py::test_read_bulk_returns_open_todos_from_sqlite",
+      "cell": null,
+      "grade": null,
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "todo.read-one": {
+      "status": "pass",
+      "test": "tests/live/test_todo.py::test_read_one_returns_a_property_directly",
+      "cell": "todo/R",
+      "grade": "✅",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "todo.recurrence-create-edit": {
+      "status": "pass",
+      "test": "tests/live/test_todo.py::test_recurrence_cannot_be_created_or_edited_by_any_route",
+      "cell": "recurrence/C",
+      "grade": "❌",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "todo.recurrence-read": {
+      "status": "pass",
+      "test": "tests/live/test_todo.py::test_recurrence_read_decodes_a_real_repeating_task",
+      "cell": "recurrence/R",
+      "grade": "🟡",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "todo.rename": {
+      "status": "pass",
+      "test": "tests/live/test_todo.py::test_rename_changes_the_title_in_place",
+      "cell": "todo/U",
+      "grade": "✅",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "todo.reopen": {
+      "status": "pass",
+      "test": "tests/live/test_todo.py::test_reopen_sets_status_open",
+      "cell": null,
+      "grade": null,
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    },
+    "todo.restore": {
+      "status": "pass",
+      "test": "tests/live/test_todo.py::test_restore_brings_a_trashed_todo_back",
+      "cell": "todo/Rest",
+      "grade": "✅",
+      "first_verified": "2026-08-07",
+      "last_verified": "2026-08-08"
+    }
+  }
+}

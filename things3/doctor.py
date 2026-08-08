@@ -16,7 +16,7 @@ import subprocess
 import sys
 from dataclasses import dataclass
 
-from . import read
+from . import applescript, lists, read
 
 THINGS_APP = "/Applications/Things3.app"
 
@@ -118,6 +118,23 @@ def _automation_permission() -> Check:
     )
 
 
+def _trash_reachable() -> Check:
+    """Resolve the Trash by id, and report the name the user actually sees.
+
+    Reporting the localized name is deliberate: it tells someone reading the
+    output in German that the library found the right list without depending on
+    what it is called.
+    """
+    result = applescript.run(f"  return name of {lists.specifier(lists.TRASH)}")
+    if not result.ok:
+        return Check(
+            "Trash reachable", False, result.stderr.strip()[:80],
+            fix="Things could not resolve its own Trash list. Restart the app; if it "
+                "persists, open an issue with your Things version.",
+        )
+    return Check("Trash reachable", True, f'shown as "{result.stdout.strip()}"')
+
+
 def _auth_token() -> Check:
     """Optional: only `operation: update` needs it (editing existing checklists)."""
     present = bool(os.environ.get("THINGS_AUTH_TOKEN"))
@@ -145,7 +162,8 @@ def run_all() -> list[Check]:
     checks = [_python_version(), _macos()]
     if checks[-1].ok:
         checks += [_things_installed(), _database(), _database_readable(),
-                   _automation_permission(), _open_command(), _auth_token()]
+                   _automation_permission(), _trash_reachable(),
+                   _open_command(), _auth_token()]
     return checks
 
 
