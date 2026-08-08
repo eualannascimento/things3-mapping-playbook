@@ -30,13 +30,13 @@ starts writing into your task list:
 <!-- generated:matrix -->
 | | C | R | U | D | Dup | Move | Done | Rest |
 |---|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-| **To-do** | · | · | · | ✅ | · | 🟡 | · | ✅ |
-| **Project** | · | · | · | · | · | · | · | · |
-| **Area** | · | · | · | · | · | ➖ | ➖ | · |
-| **Tag** | · | · | · | · | · | · | ➖ | · |
-| **Heading** | · | · | 🟡 | 🔶 | · | · | · | ➖ |
-| **Checklist item** | · | · | · | · | · | · | · | ➖ |
-| **Recurrence** | · | · | · | · | ➖ | ➖ | ➖ | ➖ |
+| **To-do** | ✅ | ✅ | ✅ | ✅ | 🟡 | 🟡 | ✅ | ✅ |
+| **Project** | ✅ | ✅ | ✅ | ✅ | 🟡 | ✅ | ✅ | ✅ |
+| **Area** | ✅ | ✅ | ✅ | ⚠️ | 🟡 | ➖ | ➖ | 🔶 |
+| **Tag** | ✅ | ✅ | ✅ | ⚠️ | 🟡 | ✅ | ➖ | 🔶 |
+| **Heading** | 🟡 | 🟡 | 🟡 | 🔶 | 🔶 | 🔶 | ✅ | ➖ |
+| **Checklist item** | ✅ | 🟡 | 🟡 | 🟡 | · | 🟡 | ✅ | ➖ |
+| **Recurrence** | ❌ | 🟡 | · | · | ➖ | ➖ | ➖ | ➖ |
 <!-- /generated:matrix -->
 
 **Columns** — C create · R read · U update (rename and edit alike) · D delete · Dup duplicate ·
@@ -90,6 +90,8 @@ things worse), atomicity across multiple items, and anything requiring recurrenc
 | Concurrency | Only checklist writes are protected, since only they replace a whole structure. Field-level writes are last-write-wins, like the app itself |
 | Things versions | Everything was verified on 3.22.11 / macOS 26.5. Older versions are untested; if a claim does not hold on yours, the live suite will say which one |
 | Language | Built-in lists are addressed by stable id, not by localized name, so the library does not depend on the language Things runs in. Proven by `pytest -m i18n`, which switches the app's language and asserts both routes |
+| Sustained load | A handful of tests in a 78-test back-to-back live run showed transient failures the app's scripting bridge did not show when run in isolation seconds later. Same phenomenon documented above for `delete`; individual operations are reliable, a long unattended automation run is not guaranteed to be |
+| Heading residue | A heading never receives `trashed=1` when its parent project is sent to the Trash — it becomes unreachable through the app but the row persists in SQLite until the Trash is actually emptied, which no automation here ever does. A live suite that exercises headings leaves inert, invisible rows behind on every run |
 
 ## Install
 

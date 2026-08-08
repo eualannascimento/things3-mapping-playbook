@@ -17,13 +17,9 @@ LIVE_TESTS = Path(__file__).parent / "live"
 
 #: The recipes still waiting for a test. This number may only ever go DOWN.
 #: Raising it means a claim was added without a test, which is the thing this
-#: file exists to prevent.
-#:
-#: Set this to whatever `len(ledger.load().pending)` reports after the live run
-#: in Task 4 -- 67 if THINGS_AUTH_TOKEN was exported, higher if the checklist
-#: tests skipped for want of it. Record the number you actually observed; do not
-#: copy the one written here.
-MAX_PENDING = 69
+#: file exists to prevent. All 78 recipes now have a live test (75 pass, 3 are
+#: recorded untestable with a stated reason), so the ceiling is 0.
+MAX_PENDING = 0
 
 
 def _claimed_recipes() -> list[tuple[str, str]]:

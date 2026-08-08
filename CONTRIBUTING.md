@@ -65,6 +65,15 @@ These cost real time to discover. They are in [docs/PLAYBOOK.md](docs/PLAYBOOK.m
 - `append-checklist-items` is a no-op: accepted, silently ineffective.
 - Deleting while iterating a live collection fails partway through.
 - `sdef` needs full Xcode; without it, it returns empty and every grep becomes a false negative.
+- A heading does not receive `trashed=1` when its parent project is sent to the Trash. It becomes
+  unreachable through the app, but the SQLite row persists — addressable by uuid, immune to
+  `delete` and to moving to the Trash directly — until the Trash is actually emptied. If you write
+  a live test that creates a heading, its residue outlives the test session; the sweep does not
+  (and cannot) clean it up. This is a real cost of testing headings, not a bug in the sweep.
+- A long, unattended live run can produce a transient failure the same operation does not show
+  when run alone seconds later — the scripting bridge degrading under sustained load, the same
+  phenomenon behind the `-1728` finding above. Re-running the specific test is the right response,
+  not loosening the assertion.
 
 ## Reporting a behaviour change
 

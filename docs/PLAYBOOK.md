@@ -108,7 +108,7 @@ Not a class in the AppleScript dictionary — but the object **is addressable as
 | **Edit** status | `AS: set status of to do id "<uuid>" to completed` — writes `status=3`, apparently archiving it |
 | **Delete** 🔶 | no command works (`delete` → `-1728`, Trash → `301`). See "Expensive workarounds" |
 | **Move** between projects 🔶 | `set project of` runs and has **no** effect. See "Expensive workarounds" |
-| **Duplicate** 🔶 | `duplicate` → `-1717`. Rebuild via the project |
+| **Duplicate** 🔶 | `duplicate` → `-10006` (a heading is not its own class, so the failure comes from the underlying `to do id` lookup, not the `-1717` a to-do or project gets). Rebuild via the project |
 | **Create in an existing project** 🔶 | five variations tested, none work. See "Expensive workarounds" |
 
 ## Checklist item
