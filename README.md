@@ -27,22 +27,24 @@ starts writing into your task list:
 
 ## Capability matrix
 
+<!-- generated:matrix -->
 | | C | R | U | D | Dup | Move | Done | Rest |
 |---|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-| **To-do** | ✅ | ✅ | ✅ | ✅ | 🟡 | 🟡 | ✅ | ✅ |
-| **Project** | ✅ | ✅ | ✅ | ✅ | 🟡 | ✅ | ✅ | ✅ |
-| **Area** | ✅ | ✅ | ✅ | ⚠️ | 🟡 | ➖ | ➖ | 🔶 |
-| **Tag** | ✅ | ✅ | ✅ | ⚠️ | 🟡 | ✅ | ➖ | 🔶 |
-| **Heading** | 🟡 | 🟡 | 🟡 | 🔶 | 🔶 | 🔶 | ✅ | ➖ |
-| **Checklist item** | ✅ | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | ✅ | ➖ |
-| **Recurrence** | ❌ | 🟡 | ❌ | ❌ | ➖ | ➖ | ➖ | ➖ |
+| **To-do** | · | · | · | ✅ | · | 🟡 | · | ✅ |
+| **Project** | · | · | · | · | · | · | · | · |
+| **Area** | · | · | · | · | · | ➖ | ➖ | · |
+| **Tag** | · | · | · | · | · | · | ➖ | · |
+| **Heading** | · | · | 🟡 | 🔶 | · | · | · | ➖ |
+| **Checklist item** | · | · | · | · | · | · | · | ➖ |
+| **Recurrence** | · | · | · | · | ➖ | ➖ | ➖ | ➖ |
+<!-- /generated:matrix -->
 
 **Columns** — C create · R read · U update (rename and edit alike) · D delete · Dup duplicate ·
 Move move · Done complete or cancel · Rest restore from the Trash
 
 **Cells** — ✅ works directly · 🟡 cheap validated workaround · 🔶 expensive workaround (rebuild the
 parent, or restore from a backup) · ⚠️ works but **irreversible** · ❌ impossible by any route,
-including composition · ➖ not applicable
+including composition · ➖ not applicable · `·` no live test yet
 
 Every cell has an exact, tested command in **[docs/PLAYBOOK.md](docs/PLAYBOOK.md)**.
 

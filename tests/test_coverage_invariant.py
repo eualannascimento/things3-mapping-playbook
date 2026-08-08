@@ -112,3 +112,14 @@ def test_no_recipe_is_recorded_as_failing():
     assert not failing, (
         f"the playbook claims these and the live suite disproves them: {failing}"
     )
+
+
+def test_the_readme_matrix_matches_the_ledger():
+    """Hand-editing a generated block would reintroduce untested claims."""
+    from things3.verification import render
+
+    readme = (Path(__file__).parent.parent / "README.md").read_text(encoding="utf-8")
+    expected = render.matrix(ledger.load())
+    assert expected in readme, (
+        "the matrix in README.md is out of date; regenerate it from VERIFIED.json"
+    )
